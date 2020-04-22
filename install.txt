@@ -1,0 +1,8 @@
+1、配置jdk环境，版本1.8
+2、将PhoneRemoteControlPlatform.war放到TOMCAT中
+3、安装MYSQL数据库软件，执行dbinstall目录下installdb.sql初始化数据库，执行mobilephoneinfo和parameter两个SQL初始化表
+4、将resources目录放到与数据库parameter表的MINIPATH配置一致目录
+5、安装nodejs
+6、命令行执行npm i -g adbkit
+7、配置数据库ADBKITPATH 为安装的\adbkit.cmd目录一致
+8、启动TOMCAT

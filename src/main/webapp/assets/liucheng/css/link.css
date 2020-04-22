@@ -1,0 +1,74 @@
+ /** @version:1.1.5
+ * @author:byl@*/
+@charset "utf-8";
+*{margin: 0;padding: 0;box-sizing: border-box;}
+.font20{font-size:20px;}
+.indextop{
+	border-top: 2px #3399ff solid;margin-bottom: 1px;line-height: 30px
+}
+
+.col-555{color: #555;}
+.col-999{color: #999;}
+.col-333{color: #333;}
+.col-fff{color: #fff;}
+.col-org{color: #f80;}
+.col-blue{color: #39f;}
+.bg-fff{background: #fff;}
+.posi-rel{position: relative;}
+.posi-abu{position: absolute;}
+.posi-fix{position: fixed;}
+.border-radius{border-radius: 50%;}
+.fl{float: left;}
+.fr{float: right;}
+.font12{font-size: 12px;}
+.font14{font-size: 14px;}
+.font16{font-size: 16px;}
+.font18{font-size: 18px;}
+.font20{font-size: 20px;}
+.font-bold{font-weight: 600;}
+.ml45{margin-left: 45px;}   /* 新加*/
+.mtb5{margin: 5px 0;}
+.dis-block{display: block;}
+.dis-inblock{display: inline-block;}
+
+/*修改绑定*/
+.rebinding-menu{ background-color:#fff; height:80px;width:100%; line-height: 80px; border-bottom:solid 1px #d5d5d5; box-shadow: 0px 2px 4px rgba(0,0,0,0.2);margin-bottom: 14px;z-index: 1100;}
+.rebinding-menu .logo{float: left;}
+.rebinding-menu .rebinding-btn{float: right;}
+.rebinding-box .box-title{width: 500px;margin:20px auto;text-align: center;}
+.rebinding-box .box-title i{font-size: 12px;color: #999;}
+.rebinding-box .box-timeline{width: 575px; margin: 80px auto; text-align: center;}
+.rebinding-box .box-timeline ul li{float: left;font-size: 16px;color: #999;width: 100px; position: relative;margin-right: 105px;}
+/*.rebinding-box .box-timeline  div[class*=box-outside]{width: 38px; height: 38px; background-color: #d7d7d7; border-radius: 50%;line-height: 38px; margin: 10px auto; display:flex; display: -webkit-flex;  align-items:center;}*/
+.rebinding-box .box-timeline .outside1ab{width: 38px; height: 38px; background-color: #d7d7d7; border-radius: 50%;line-height: 38px; margin: 10px auto; display:flex; display: -webkit-flex;  align-items:center;}
+.rebinding-box .box-timeline .outside2a{width: 38px; height: 38px; background-color: #d7d7d7; border-radius: 50%;line-height: 38px; margin: 10px auto; display:flex; display: -webkit-flex;  align-items:center;}
+.rebinding-box .box-timeline .outside1ab:before{content:"";position:absolute; height: 1px; width: 105px;background-color: #d7d7d7;top: 48px;right: 71px;z-index: 2;}
+.rebinding-box .box-timeline .outside1ab:after{content:"";position:absolute; height: 1px; width: 105px;background-color: #d7d7d7;top: 48px;left: 71px;z-index: 2;}
+.rebinding-box .box-timeline .outside2a:before{content:"";position:absolute; height: 1px; width: 105px;background-color: #d7d7d7;top: 48px;right: 71px;z-index: 2;}
+.rebinding-box .box-timeline  div[class*=box-num]{width: 26px; height: 26px;line-height: 26px; margin: 14px auto; border-radius: 50%; background-color: #39f;color: #fff; }
+/*.rebinding-box .box-timeline  div[class*=box-nums]:after{content: ""; position:absolute; height: 1px; width: 105px;background-color: #39f;top: 46px;left: 71px;}*/
+.rebinding-box .box-timeline .outside1ab .num2ab{background-color: #999;}
+.rebinding-box .box-timeline .outside2a .num3a{background-color: #999;}
+.rebinding-box .box-timeline ul .box-num1{background-color: #39f;}
+.rebinding-box .box-timeline .box-num2,.rebinding-box .box-timeline .box-num3{margin-left: 45px;}
+.rebinding-box .box-timeline .box-num1:after{content:"";position:absolute; height: 1px; width: 105px;background-color: #39f;top: 48px;left: 71px;}
+.rebinding-box .box-timeline .num2ab:before{content:"";position:absolute; height: 1px; width: 105px;background-color: #39f;top: 48px;right: 71px;}
+.rebinding-box .box-timeline .num2ab:after{content:"";position:absolute; height: 1px; width: 105px;background-color: #39f;top: 48px;left: 71px;}
+.rebinding-box .box-timeline .num3a:before{content:"";position:absolute; height: 1px; width: 105px;background-color: #39f;top: 48px;right: 71px;}
+/*第一步*/
+.rebinding-box  div[class*=box-form] {width: 50%;margin-top: 15%;position: relative;}
+.rebinding-box  .twobox-form{display: none;}
+.rebinding-box  .threebox-form{display: none;}
+.rebinding-box .onebox-form .oneform-label{float: left;display: block;width:70px;text-align: center; font-size: 14px;height: 40px;line-height: 40px;}
+.rebinding-box .onebox-form .onebtn-box{width: 100px;height: 35px; margin:40px auto;}
+.rebinding-box .onebox-form .onebtn-box .onebtn{width: 100px;height: 35px; margin: 0 auto;background-color: #39f;color: #fff;border-radius: 6px;font-size: 14px;}
+/*第二步*/
+.rebinding-box .twobox-form label{float: left;display: block;width: 70px;text-align: center; font-size: 14px;height: 40px; line-height: 40px; }
+.rebinding-box .twobox-form .newtel{margin-bottom: 14px;}
+.rebinding-box .twobox-form  .sendcode{float: right; width: 35%;height: 40px; margin: 0 auto;background-color: #39f;color: #fff;border-radius: 6px;font-size: 14px;margin-top: -40px;}
+.rebinding-box .twobox-form  .twobtn-box{width: 100px;height: 30px; margin:20px auto;}
+.rebinding-box .twobox-form  .twobtn-box .twobtn{width: 100px;height: 30px;background-color: #39f;color: #fff;border-radius: 6px;font-size: 14px;}
+/*第三步*/
+.rebinding-box .threebox-form .successr .symbol{width: 66px;height: 66px;border: solid 4px #39f;border-radius:50%;position: relative;margin: 0 auto;}
+.rebinding-box .threebox-form .successr .symbol:before{position: absolute; content: " ";width:36px; height:19px;border-left:4px solid #39f; border-bottom: 4px solid #39f;top: 12px;left: 10px;transform:rotate(-46deg);}
+.rebinding-box .threebox-form .successr p{font-size: 20px;text-align: center;margin-top: 15px;}

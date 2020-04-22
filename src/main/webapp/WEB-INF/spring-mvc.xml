@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:websocket="http://www.springframework.org/schema/websocket"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+                        http://www.springframework.org/schema/context
+                        http://www.springframework.org/schema/context/spring-context-3.2.xsd
+                        http://www.springframework.org/schema/mvc
+                        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+                        http://www.springframework.org/schema/websocket
+                        http://www.springframework.org/schema/websocket/spring-websocket.xsd"
+      >
+    <!--启用spring的一些annotation -->
+    <context:annotation-config/>
+
+    <!-- 自动扫描该包，使SpringMVC认为包下用了@controller注解的类是控制器 -->
+    <context:component-scan base-package="controller">
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+    <context:component-scan base-package="service" />
+    <context:component-scan base-package="dao" />
+    <context:component-scan base-package="minicap" />
+    <context:component-scan base-package="websocket" />
+    <!--HandlerMapping 无需配置，springmvc可以默认启动-->
+
+    <!-- 配置注解驱动 可以将request参数与绑定到controller参数上 -->
+    <mvc:annotation-driven/>
+
+    <!-- 对模型视图名称的解析，即在模型视图名称添加前后缀(如果最后一个还是表示文件夹,则最后的斜杠不要漏了) 使用JSP-->
+    <!-- 默认的视图解析器 在上边的解析错误时使用 (默认使用html)- -->
+    <mvc:resources mapping="/assets/**" location="/assets/" />
+    <bean id="defaultViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+        <property name="prefix" value="/WEB-INF/views/"/><!--设置JSP文件的目录位置-->
+        <property name="suffix" value=".jsp"/>
+        <property name="exposeContextBeansAsAttributes" value="true"/>
+    </bean>
+    <!-- springmvc文件上传需要配置的节点-->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize" value="400000000"/>
+        <property name="defaultEncoding" value="UTF-8"/>
+        <property name="resolveLazily" value="true"/>
+    </bean>
+
+    <!-- dbcp数据库连接池配置-->
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
+
+        <!--阿里云生成环境-->
+        <property name="url" value="jdbc:mysql://rm-2zeve32ku74sin3p4jo.mysql.rds.aliyuncs.com:3306/remotephonecontrol?useSSL=true"/>
+        <property name="username" value="root"/>
+        <property name="password" value="Cfca_1234$#@!"/>
+
+        <!--153测试环境-->
+        <!--<property name="url" value="jdbc:mysql://192.168.32.153:3306/cobub?characterEncoding=UTF-8"/>-->
+        <!--<property name="username" value="cobub"/>-->
+        <!--<property name="password" value="cfca1234"/>-->
+
+
+        <!--maxActive: 最大连接数量-->
+        <property name="maxActive" value="100"/>
+        <!--minIdle: 最小空闲连接-->
+        <property name="minIdle" value="50"/>
+        <!--maxIdle: 最大空闲连接-->
+        <property name="maxIdle" value="60"/>
+        <!--initialSize: 初始化连接-->
+        <property name="initialSize" value="10"/>
+        <!--  连接被泄露时是否打印 -->
+        <property name="logAbandoned" value="true"/>
+        <!--   removeAbandoned: 是否自动回收超时连接 -->
+        <property name="removeAbandoned" value="true"/>
+        <!--  removeAbandonedTimeout: 超时时间(以秒数为单位) -->
+        <property name="removeAbandonedTimeout" value="10"/>
+        <!--   maxWait: 超时等待时间以毫秒为单位 1000等于60秒 -->
+        <property name="maxWait" value="30000"/>
+        <!--   在空闲连接回收器线程运行期间休眠的时间值,以毫秒为单位. -->
+        <property name="timeBetweenEvictionRunsMillis" value="30000"/>
+        <!--   在每次空闲连接回收器线程(如果有)运行时检查的连接数量 -->
+        <property name="numTestsPerEvictionRun" value="3"/>
+        <!--    1000 * 60 * 30  连接在池中保持空闲而不被空闲连接回收器线程 -->
+        <property name="minEvictableIdleTimeMillis" value="180000"/>
+        <property name="validationQuery" value="SELECT 1 FROM DUAL"/>
+
+        <!-- 定时对线程池中的链接进行validateObject校验，对无效的链接进行关闭 -->
+        <property name="testWhileIdle" value="true"/>
+        <!-- 指定在从连接池中拿连接时，要检查连接是否有效，若无效会将连接从连接池中移除掉 -->
+        <property name="testOnBorrow" value="false"/>
+
+    </bean>
+
+    <!-- 创建spring NamedParameterJdbcTemplate -->
+    <bean class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate"  id="namedParameterJdbcTemplate">
+        <constructor-arg ref="dataSource"></constructor-arg>
+    </bean>
+
+    <bean id="smartDao" class="dao.SmartDao">
+        <!-- 注入jdbcTemplate对象 -->
+        <property name="namedParameterJdbcTemplate" ref="namedParameterJdbcTemplate"></property>
+    </bean>
+    <bean id="websocket" class="websocket.WebsocketHandler"/>
+    <websocket:handlers>
+        <websocket:mapping path="/websocket" handler="websocket"/>
+        <websocket:handshake-interceptors>
+            <bean class="websocket.HandshakeInterceptor"/>
+        </websocket:handshake-interceptors>
+    </websocket:handlers>
+</beans>
