@@ -12,11 +12,11 @@ Stf is commonly used as a classic remote real machine debugging tool, but there 
 And stf is more suitable for internal testing tools, not for remote debugging platforms open to the public.
 
 This platform draws on stf ideas and re-built services designed for remote real machine debugging, using java technology, mysql database, and easier to build and maintain than stf.
-
-Installation 
+ 
 
 The platform has been tested on hundreds of Android phones, and the android version supports 4.x to 10.
 
+Installation
 
 1. Configuring the JDK environment, version 1.8
 
@@ -33,3 +33,5 @@ The platform has been tested on hundreds of Android phones, and the android vers
 7. The configuration database adbkitpath is consistent with the directory of the installed \ adbkit.cmd
 
 8. Start Tomcat
+
+9. Browser access http://tomcatip:tomcatport/phoneremotecontrolplatform/devicelist/
