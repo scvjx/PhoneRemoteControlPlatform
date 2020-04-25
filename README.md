@@ -7,7 +7,11 @@ Developed with Java language, with the help of minicap and adbkit, it realizes r
 
 For application examples, please refer to http://ctscatp.com.cn/, and use the free trial account guest password guest to try.
 
+Stf is commonly used as a classic remote real machine debugging tool, but there are some shortcomings, such as android10 does not support clicking, not stable enough, etc.
 
+And stf is more suitable for internal testing tools, not for remote debugging platforms open to the public.
+
+This platform draws on stf ideas and re-built services designed for remote real machine debugging, using java technology, mysql database, and easier to build and maintain than stf.
 
 Installation 
 
