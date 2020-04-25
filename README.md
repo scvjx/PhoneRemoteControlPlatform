@@ -15,6 +15,9 @@ This platform draws on stf ideas and re-built services designed for remote real 
 
 Installation 
 
+The platform has been tested on hundreds of Android phones, and the android version supports 4.x to 10.
+
+
 1. Configuring the JDK environment, version 1.8
 
 2. Put phoneremotecontrolplatform.war in Tomcat
