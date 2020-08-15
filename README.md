@@ -5,8 +5,6 @@ A remote debugging Android mobile platform
 
 Developed with Java language, with the help of minicap and adbkit, it realizes remote click on the mobile screen, ADB connection, obtaining logcat log, uploading and installing app
 
-For application examples, please refer to http://ctscatp.com.cn/, and use the free trial account guest password guest to try.
-
 Stf is commonly used as a classic remote real machine debugging tool, but there are some shortcomings, such as android10 does not support clicking, not stable enough, etc.
 
 And stf is more suitable for internal testing tools, not for remote debugging platforms open to the public.
