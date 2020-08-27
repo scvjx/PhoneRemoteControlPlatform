@@ -64,6 +64,12 @@
                 <h3 style="margin-left: 10%; margin-top: 0.8%">您正在图像识别脚本录制页面</h3>
                 <br>
             </td>
+            <td>
+                <h3 style="margin-left: 50%; margin-top: 0.8%;">
+                    使用结束后请点击<a href="<%=basePath%>/stopdevice?userid=${userid}&deviceid=${deviceid}&model=${model}"><font color="red">停止使用</font></a>
+                </h3>
+                <br>
+            </td>
         </tr>
     </table>
 </div>
@@ -77,9 +83,9 @@
                 </div>
                 <div id="cliptox" style="position: absolute;display:none"></div>
                 <div style="text-align: center; background-color: #EAEAEA">
-                    <button style="height: 45px; width: 20%; background: url('assets/images/back.jpg') no-repeat; background-size: 100% 100%"></button>&nbsp;
-                    <button style="height: 45px;width: 20%; background: url('assets/images/home1.jpg') no-repeat; background-size: 100% 100%"></button>&nbsp;
-                    <button style="height: 45px; width: 20%; background: url('assets/images/kill.jpg') no-repeat; background-size: 100% 100%"></button>
+                    <button id="backevent" name="backevent" style="height: 45px; width: 20%; background: url('assets/images/back.jpg') no-repeat; background-size: 100% 100%"></button>&nbsp;
+                    <button id="homeevent" name="homeevent" style="height: 45px;width: 20%; background: url('assets/images/home1.jpg') no-repeat; background-size: 100% 100%"></button>&nbsp;
+                    <button id="killevent" name="killevent" style="height: 45px; width: 20%; background: url('assets/images/kill.jpg') no-repeat; background-size: 100% 100%"></button>
                 </div>
             </td>
             <td style="width: 1%; border-left: #B0E0E6 solid 2px;"></td>
@@ -966,7 +972,8 @@
                    data: {"userid": "${userid}",
                           "scriptname":scriptname,
                           "scriptstring":scriptextstr,
-                          "scriptid":scriptid
+                          "scriptid":scriptid,
+                          "deviceid":'${deviceid}'
                           },
                    success:function (data)
                    {
@@ -1648,9 +1655,60 @@
         return uuid;
     }
 
+       $("#backevent").click(function (){
+      var url = "<%=basePath%>/inputevent";
+      $.ajax({
+         type : "get",
+         url : url,
+         data : {
+                    sn : '${deviceid}',
+                    eventnumber : "4"
+                },
+
+         success:function(res){
+         },
+         error: function() {
+
+             }
+        });
+   });
+
+   $("#homeevent").click(function (){
+         var url = "<%=basePath%>/inputevent";
+         $.ajax({
+            type : "get",
+            url : url,
+            data : {
+                       sn : '${deviceid}',
+                       eventnumber : "3"
+                   },
+            success:function(res){
+            },
+            error: function() {
+
+                }
+           });
+      });
+
+      $("#killevent").click(function(){
+            var url = "<%=basePath%>/inputevent";
+            $.ajax({
+               type : "get",
+               url : url,
+               data : {
+                          sn : '${deviceid}',
+                          eventnumber : "82"
+                      },
+
+               success:function(res){
+               },
+               error: function() {
+                   }
+              });
+         });
+
 
 </script>
-
 </html>
 
 

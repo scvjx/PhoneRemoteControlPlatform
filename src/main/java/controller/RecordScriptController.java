@@ -1,7 +1,6 @@
 package controller;
 
 import adb.AdbDevice;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import common.Constant;
 import dao.ParameterDao;
@@ -12,9 +11,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import service.DeviceListenerService;
+import service.DeviceListService;
 import tools.FileTool;
 import tools.LogTools;
-import tools.PlayBackTool;
+import adb.PlayBackTool;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,6 +25,7 @@ import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+
 @Controller
 @RequestMapping("/")
 public class RecordScriptController {
@@ -32,6 +33,8 @@ public class RecordScriptController {
     private LogTools logTools = new LogTools();
     @Resource
     Minicap minicap;
+    @Resource
+    private DeviceListService deviceListService;
     @Resource
     DeviceListenerService deviceListenerService;
     @Resource
@@ -131,8 +134,15 @@ public class RecordScriptController {
     @ResponseBody
     public String saveScript(HttpServletRequest req, HttpServletResponse resp) {
         String testscript = req.getParameter("testscript");
+        testscript = xssEncode(testscript);
         String scriptname = req.getParameter("scriptname");
         String userid = req.getParameter("userid");
+
+        String deviceid = req.getParameter("deviceid");
+        if(deviceid!=null) {
+            deviceListService.stopDevice(userid, deviceid,"");
+        }
+
         FileTool fileTool = new FileTool();
         List<Map<String, Object>> paramlist = parameterDao.getParamByName(Constant.SAVESCRIPTFILEPATH);
         String saveFilePath = (String) paramlist.get(0).get("value");
@@ -146,6 +156,7 @@ public class RecordScriptController {
         args1.put("scriptname",scriptname);
         args1.put("createtime",date);
         args1.put("type","1");
+        args1.put("scriptid","");
         scriptDao.insertScript(args1);
         Map map = new HashMap();
         map.put("code", "200");
@@ -160,6 +171,12 @@ public class RecordScriptController {
         String userid = getPostParamValue(param,"userid");
         String scriptname = getPostParamValue(param,"scriptname");
         String scriptid = getPostParamValue(param,"scriptid");
+        
+        String deviceid = getPostParamValue(param,"deviceid");
+        if(deviceid!=null) {
+            deviceListService.stopDevice(userid, deviceid,"");
+        }
+
         try {
             scriptstring = URLDecoder.decode(scriptstring, "UTF-8");
             scriptname = URLDecoder.decode(scriptname, "UTF-8");
@@ -171,7 +188,7 @@ public class RecordScriptController {
         String scriptstr = "";
         while (iter.hasNext()){
             Map.Entry entry = (Map.Entry) iter.next();
-            scriptstr += "   "+entry.getValue()+"\r\n";
+            scriptstr += "   "+xssEncode((String) entry.getValue())+"\r\n";
         }
         FileTool fileTool = new FileTool();
         List<Map<String, Object>> paramlist = parameterDao.getParamByName(Constant.PICTURESCRIPTPATH);
@@ -240,4 +257,51 @@ public class RecordScriptController {
         }
         return value;
     }
+
+    private  String xssEncode(String s) {
+        //XSS静态过滤方法
+        if (s == null || s.isEmpty()) {
+            return s;
+        }
+        StringBuilder sb = new StringBuilder(s.length() + 16);
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            switch (c) {
+                case '>':
+                    sb.append('＞');// 全角大于号
+                    break;
+                case '<':
+                    sb.append('＜');// 全角小于号
+                    break;
+                case '\'':
+                    sb.append('‘');// 全角单引号
+                    break;
+                case '\"':
+                    sb.append('“');// 全角双引号
+                    break;
+                case '&':
+                    sb.append('＆');// 全角
+                    break;
+                case '\\':
+                    sb.append('＼');// 全角斜线
+                    break;
+                case '#':
+                    sb.append('＃');// 全角井号
+                    break;
+                case '(':
+                    sb.append('（');//
+                    break;
+                case ')':
+                    sb.append('）');//
+                    break;
+                default:
+                    sb.append(c);
+                    break;
+            }
+        }
+        return sb.toString();
+
+
+    }
+
 }

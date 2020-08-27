@@ -2,8 +2,8 @@ package service;
 
 import dao.DevicesDao;
 import dao.MobilePhoneInfoDao;
+import dao.User2roleDao;
 import org.springframework.stereotype.Component;
-import tools.LogTools;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -17,9 +17,11 @@ import java.util.Map;
  */
 @Component("DeviceListService")
 public class DeviceListService {
-    private LogTools logTools = new LogTools();
+
     @Resource
     DevicesDao devicesDao;
+    @Resource
+    User2roleDao user2roleDao;
     @Resource
     MobilePhoneInfoDao mobilePhoneInfoDao;
 
@@ -60,7 +62,6 @@ public class DeviceListService {
         HashMap args = new HashMap();
         args.put("userid",userid);
         args.put("deviceid",deviceid);
-        args.put("model",model);
         args.put("newid","");
         args.put("status","1");
         devicesDao.updateDevicesUseridByDeviceidModelUserid(args);
@@ -87,36 +88,33 @@ public class DeviceListService {
 
     public List<Map<String, Object>> getUseablePhoneInfo(String userid){
 
+        List<Map<String, Object>> roleList  = user2roleDao.getRoleList(userid);
+        String roleid = (String) roleList.get(0).get("roleid");
         List<Map<String, Object>> phoneList = new ArrayList<>();
         List<Map<String, Object>> deviceList = devicesDao.getDevicesByStatus("1");//查询所有在线设备信息
         for(Map device:deviceList){
-            if("".equals(device.get("userid")) || userid.equals(device.get("userid"))){//本人占用或者没有人用才可以查到
+            if(("".equals(device.get("userid")) || userid.equals(device.get("userid")))&&(roleid.equals(device.get("assignroleid"))||"0".equals(device.get("assignroleid")))){
+                //本人占用或者没有人用,并且设备表中分配的ROLEID和登录用户相同或者分配的ROLEID等于0（表示设备给所有用户看才可以查到
                 String deviceid = (String) device.get("deviceid");
                 String model = (String) device.get("model");
                 List<Map<String, Object>> mobilephone = mobilePhoneInfoDao.getMobileInfoByDeviceIdModel(deviceid,model);//查询所有设备库信息
                 Map phoneitem = new HashMap();
-                if(mobilephone.size()==0){
-                    //数据库没有配置手机信息
-                    logTools.printLog("没有配置手机信息无法使用","error");
-                }else{
-                    phoneitem.put("phonetype",mobilephone.get(0).get("phonetype"));
-                    phoneitem.put("resolutionratio",mobilephone.get(0).get("resolutionratio"));
-                    phoneitem.put("androidversion",mobilephone.get(0).get("androidversion"));
-                    phoneitem.put("iconpath",mobilephone.get(0).get("iconpath"));
-                    phoneitem.put("deviceid",mobilephone.get(0).get("deviceid"));
-                    phoneitem.put("model",mobilephone.get(0).get("model"));
-                    phoneitem.put("status","占用");
-                    if(device.get("userid").equals(userid)){
-                        //当前用户占用
-                        phoneitem.put("status","停止使用");
-                    }
-                    if("".equals(device.get("userid"))){
-                        //没有用户占用
-                        phoneitem.put("status","开始使用");
-                    }
-                    phoneList.add(phoneitem);
+                phoneitem.put("phonetype",mobilephone.get(0).get("phonetype"));
+                phoneitem.put("resolutionratio",mobilephone.get(0).get("resolutionratio"));
+                phoneitem.put("androidversion",mobilephone.get(0).get("androidversion"));
+                phoneitem.put("iconpath",mobilephone.get(0).get("iconpath"));
+                phoneitem.put("deviceid",mobilephone.get(0).get("deviceid"));
+                phoneitem.put("model",mobilephone.get(0).get("model"));
+                phoneitem.put("status","占用");
+                if(device.get("userid").equals(userid)){
+                    //当前用户占用
+                    phoneitem.put("status","停止使用");
                 }
-
+                if("".equals(device.get("userid"))){
+                    //没有用户占用
+                    phoneitem.put("status","开始使用");
+                }
+                phoneList.add(phoneitem);
             }
         }
         return phoneList;

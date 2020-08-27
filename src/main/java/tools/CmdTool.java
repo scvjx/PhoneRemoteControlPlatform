@@ -1,8 +1,9 @@
 package tools;
 
-import java.io.BufferedReader;
-import java.io.IOException;
+import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+@Component("CmdTool")
 public class CmdTool {
 
     private LogTools logTools = new LogTools();

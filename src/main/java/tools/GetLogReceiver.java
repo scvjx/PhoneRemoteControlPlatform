@@ -1,10 +1,11 @@
 package tools;
 
 import com.android.ddmlib.MultiLineReceiver;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-
+@Component("GetLogReceiver")
 public class GetLogReceiver extends MultiLineReceiver {
 
     // 环形缓冲区的容量大小

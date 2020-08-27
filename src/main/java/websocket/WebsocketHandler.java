@@ -1,6 +1,7 @@
 package websocket;
 
 import adb.AdbDevice;
+import common.Constant;
 import dao.DevicesDao;
 import minicap.MiniCapDataHandler;
 import org.springframework.web.socket.CloseStatus;
@@ -36,27 +37,31 @@ public class WebsocketHandler  extends TextWebSocketHandler {
         URI sn = session.getUri();
         serialNumber = sn.getQuery().split("=")[1];
         adbDevice = deviceListenerService.getDevice(serialNumber);
-        String[] strarray = commandstr.split(" ");
-        if("t".equals(strarray[0])){
-            String x = strarray[1];
-            String y = strarray[2];
-            adbDevice.adbTap(x,y);
+        String model = adbDevice.getProperty(Constant.PROP_MODEL);
+        List<Map<String, Object>> devicesList =devicesDao.getDevicesByDeviceidModel(serialNumber,model);
+        String userid = (String) devicesList.get(0).get("userid");
+        if(!"".equals(userid)){
+            String[] strarray = commandstr.split(" ");
+            if("t".equals(strarray[0])){
+                String x = strarray[1];
+                String y = strarray[2];
+                adbDevice.adbTap(x,y);
+            }
+            if("s".equals(strarray[0])){
+                String startx = strarray[1];
+                String starty = strarray[2];
+                String endx = strarray[3];
+                String endy = strarray[4];
+                adbDevice.adbswipe(startx,starty,endx,endy,1);
+            }
+            if("p".equals(strarray[0])){
+                String startx = strarray[1];
+                String starty = strarray[2];
+                String endx = strarray[3];
+                String endy = strarray[4];
+                adbDevice.adbswipe(startx,starty,endx,endy,2);
+            }
         }
-        if("s".equals(strarray[0])){
-            String startx = strarray[1];
-            String starty = strarray[2];
-            String endx = strarray[3];
-            String endy = strarray[4];
-            adbDevice.adbswipe(startx,starty,endx,endy,1);
-        }
-        if("p".equals(strarray[0])){
-            String startx = strarray[1];
-            String starty = strarray[2];
-            String endx = strarray[3];
-            String endy = strarray[4];
-            adbDevice.adbswipe(startx,starty,endx,endy,2);
-        }
-
     }
 
     @Override

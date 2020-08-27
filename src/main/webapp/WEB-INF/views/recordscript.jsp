@@ -62,6 +62,12 @@
                 <h3 style="margin-left: 10%; margin-top: 0.8%">您正在脚本录制页面</h3>
                 <br>
             </td>
+            <td>
+                <h3 style="margin-left: 50%; margin-top: 0.8%;">
+                    使用结束后请点击<a href="<%=basePath%>/stopdevice?userid=${userid}&deviceid=${deviceid}&model=${model}"><font color="red">停止使用</font></a>
+                </h3>
+                <br>
+            </td>
         </tr>
     </table>
 </div>
@@ -73,9 +79,9 @@
                     <canvas id="phone-screen"></canvas>
                 </div>
                 <div style="text-align: center; background-color: #EAEAEA">
-                    <button style="height: 45px; width: 20%; background: url('assets/images/back.jpg') no-repeat; background-size: 100% 100%"></button>&nbsp;
-                    <button style="height: 45px;width: 20%; background: url('assets/images/home1.jpg') no-repeat; background-size: 100% 100%"></button>&nbsp;
-                    <button style="height: 45px; width: 20%; background: url('assets/images/kill.jpg') no-repeat; background-size: 100% 100%"></button>
+                    <button id="backevent" name="backevent" style="height: 45px; width: 20%; background: url('assets/images/back.jpg') no-repeat; background-size: 100% 100%"></button>&nbsp;
+                    <button id="homeevent" name="homeevent" style="height: 45px;width: 20%; background: url('assets/images/home1.jpg') no-repeat; background-size: 100% 100%"></button>&nbsp;
+                    <button id="killevent" name="killevent" style="height: 45px; width: 20%; background: url('assets/images/kill.jpg') no-repeat; background-size: 100% 100%"></button>
                 </div>
             </td>
             <td style="width: 1%; border-left: #B0E0E6 solid 2px;"></td>
@@ -238,6 +244,7 @@
 
      $("#insertsleep").live("click",function(){
          var sleeptime = $("#sleeptime").val();
+         sleeptime = stripscript(sleeptime);
          var tbBody="<tr id='step"+scriptnumber+"'><td>等待"+sleeptime+"秒</td><td><button id='del"+scriptnumber+"' onclick='delscript("+scriptnumber+");'>删除</button></td></tr>"
          $("#script").append(tbBody);
          scriptnumber++;
@@ -247,6 +254,7 @@
 
   $("#inserttext").live("click",function(){
          var inputtext = $("#inputtext").val();
+         inputtext = stripscript(inputtext);
          var tbBody="<tr id='step"+scriptnumber+"'><td>输入文本"+inputtext+"</td><td><button id='del"+scriptnumber+"' onclick='delscript("+scriptnumber+");'>删除</button></td></tr>"
          $("#script").append(tbBody);
          scriptnumber++;
@@ -307,7 +315,8 @@
                         data: {
                                   "scriptname":scriptname,
                                   "testscript":testscript,
-                                  "userid":'${userid}'
+                                  "userid":'${userid}',
+                                  "deviceid":'${deviceid}'
                               },
                         success:function(res){
                             $("#savescriptres").append("<font color='red'>脚本文件保存成功</font>");
@@ -315,8 +324,73 @@
                     })
                 });
 
-</script>
 
+               $("#backevent").click(function (){
+      var url = "<%=basePath%>/inputevent";
+      $.ajax({
+         type : "get",
+         url : url,
+         data : {
+                    sn : '${deviceid}',
+                    eventnumber : "4"
+                },
+
+         success:function(res){
+         },
+         error: function() {
+
+             }
+        });
+   });
+
+   $("#homeevent").click(function (){
+         var url = "<%=basePath%>/inputevent";
+         $.ajax({
+            type : "get",
+            url : url,
+            data : {
+                       sn : '${deviceid}',
+                       eventnumber : "3"
+                   },
+            success:function(res){
+            },
+            error: function() {
+
+                }
+           });
+      });
+
+      $("#killevent").click(function(){
+            var url = "<%=basePath%>/inputevent";
+            $.ajax({
+               type : "get",
+               url : url,
+               data : {
+                          sn : '${deviceid}',
+                          eventnumber : "82"
+                      },
+
+               success:function(res){
+               },
+               error: function() {
+                   }
+              });
+         });
+
+
+
+</script>
+<script>
+function stripscript(s)
+{
+var pattern = new RegExp("[%--`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）――|{}【】‘；：”“'。，、？]")        //格式 RegExp("[在中间定义特殊过滤字符]")
+var rs = "";
+for (var i = 0; i < s.length; i++) {
+ rs = rs+s.substr(i,1).replace(pattern,'');
+}
+return rs;
+}
+</script>
 </html>
 
 

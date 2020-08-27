@@ -1,10 +1,12 @@
 package tools;
 
+import org.springframework.stereotype.Component;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
+@Component("FileTool")
 public class FileTool {
 
     public void saveFile(String fileName,String text,String filePath){

@@ -96,4 +96,26 @@ public class DeviceListController {
         return mv;
     }
 
+    @RequestMapping("/stopdevice")
+    @ResponseBody
+    public ModelAndView stopdevice(HttpServletRequest req, HttpServletResponse resp){
+        String res = "";
+        String userid = req.getParameter("userid");
+        String deviceid = req.getParameter("deviceid");
+        String model = req.getParameter("model");
+        deviceListService.stopDevice(userid,deviceid,model);
+        //更新用户使用日志停止时间
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+        String date = df.format(new Date());
+        HashMap args = new HashMap();
+        args.put("userid",userid);
+        args.put("deviceid",deviceid);
+        args.put("model",model);
+        args.put("endtime",date);
+        userLogDao.updateEndtime(args);
+        //停止该设备adbkit占用的端口
+
+        ModelAndView mv = new ModelAndView("stoprecordjsp");
+        return mv;
+    }
 }

@@ -24,6 +24,7 @@
     <context:component-scan base-package="dao" />
     <context:component-scan base-package="minicap" />
     <context:component-scan base-package="websocket" />
+    <context:component-scan base-package="tools" />
     <!--HandlerMapping 无需配置，springmvc可以默认启动-->
 
     <!-- 配置注解驱动 可以将request参数与绑定到controller参数上 -->
@@ -49,12 +50,15 @@
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
         <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
 
- 
+        <!--阿里云生成环境-->
+        <property name="url" value="jdbc:mysql://rm-2zeve32ku74sin3p4jo.mysql.rds.aliyuncs.com:3306/remotephonecontrol?useSSL=true"/>
+        <property name="username" value="root"/>
+        <property name="password" value="Cfca_1234$#@!"/>
 
         <!--153测试环境-->
-        <property name="url" value="jdbc:mysql://192.168.32.153:3306/cobub?characterEncoding=UTF-8"/>
-        <property name="username" value="1111111"/>
-       <property name="password" value="1111111"/>
+        <!--<property name="url" value="jdbc:mysql://192.168.32.153:3306/cobub?characterEncoding=UTF-8"/>-->
+        <!--<property name="username" value="cobub"/>-->
+        <!--<property name="password" value="cfca1234"/>-->
 
 
         <!--maxActive: 最大连接数量-->

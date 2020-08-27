@@ -3,12 +3,13 @@ package tools;
 import common.Constant;
 import logs.ThreadLogger;
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Component;
 
 /**
  * Created by jiaxin on 2018/10/23.
  * 封装日志打印工具类
  */
-
+@Component("LogTools")
 public class LogTools {
     private static Logger logger;
     private boolean debugFlag = Constant.DEBUGFLAG;

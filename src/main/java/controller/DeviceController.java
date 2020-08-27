@@ -3,10 +3,7 @@ package controller;
 import adb.AdbDevice;
 import com.alibaba.fastjson.JSONObject;
 import common.Constant;
-import dao.DevicesDao;
-import dao.ParameterDao;
-import dao.UserLogDao;
-import dao.UserSettingDao;
+import dao.*;
 import minicap.Minicap;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -46,78 +43,92 @@ public class DeviceController {
     DevicesDao devicesDao;
     @Resource
     ParameterDao parameterDao;
+    @Resource
+    User2roleDao user2roleDao;
+
     private  LogTools logTools = new LogTools();
     private boolean isKilled = false;
     private int logcatCurrentRow = 0;
 
     @RequestMapping("/devicecontrol")
     public ModelAndView devicecontrol(HttpServletRequest req, HttpServletResponse resp){
-        ModelAndView mv = new ModelAndView("devicecontrol");
-        List<AdbDevice> adbDeviceList = deviceListenerService.getAdbDeviceList();
+        String userid =req.getParameter("userid");
+        List<Map<String, Object>> roleList  = user2roleDao.getRoleList(userid);
+        String roleid = (String) roleList.get(0).get("roleid");
         String deviceid = req.getParameter("deviceid");
         String model = req.getParameter("model");
-        String userid =req.getParameter("userid");
-        String phonetype = req.getParameter("phonetype");
-        List<Map<String, Object>> userSettingList = userSetting.getMinicapResolution(deviceid,model,userid);
-        String quality = "";
-        if(userSettingList.size()==0){
-            //用户没有设置过自己的清晰度用默认
-            List<Map<String, Object>> paramlist = parameterDao.getParamByName(Constant.MINICAPINITRESOLUTION);
-            quality = (String) paramlist.get(0).get("value");
-        }else{
-            quality = (String) userSettingList.get(0).get("minicapresolution");
-        }
-        //更新数据库使用状态
-        HashMap args = new HashMap();
-        args.put("userid",userid);
-        args.put("deviceid",deviceid);
-        args.put("model",model);
-        args.put("status","1");
-        devicesDao.updateDevicesUseridStatusByDeviceidModel(args);
         List<Map<String, Object>> deviceList = devicesDao.getDevicesByDeviceidModel(deviceid,model);
-        String adbkitPort = (String) deviceList.get(0).get("adbkitport");
-        List<Map<String, Object>> paramlist1 = parameterDao.getParamByName(Constant.ADBKITPATH);
-        String adbkitpath = (String) paramlist1.get(0).get("value");
-        List<Map<String, Object>> paramlist2 = parameterDao.getParamByName(Constant.LOGCATROWS);
-        String logcatRows = (String) paramlist2.get(0).get("value");
-        List<Map<String, Object>> paramlist3 = parameterDao.getParamByName(Constant.SERVERIP);
-        String serverIp = (String) paramlist3.get(0).get("value");
-        for(AdbDevice adbDevice :adbDeviceList){
-            if(deviceid!=null && deviceid.equals(adbDevice.getSerialNumber())&& model!=null && model.equals(adbDevice.getProperty(Constant.PROP_MODEL))){
-                CmdTool cmdTool = new CmdTool();
-                String startAdbKit = adbkitpath+" usb-device-to-tcp -p "+adbkitPort+" "+adbDevice.getSerialNumber();
-                logTools.printLog(startAdbKit,"debug");
-                cmdTool.execCommand(startAdbKit);
-                String screensize = adbDevice.getProperty("SCREEN_SIZE");
-                mv.addObject("screensize",screensize);
-                mv.addObject("manufacture",adbDevice.getProperty("MANUFACTURE"));
-                mv.addObject("sn",adbDevice.getSerialNumber());
-                mv.addObject("phonetype",phonetype);
-                mv.addObject("userid",userid);
-                mv.addObject("deviceid",deviceid);
-                mv.addObject("model",model);
-                mv.addObject("resolution",quality);
-                mv.addObject("adbkitport",adbkitPort);
-                mv.addObject("logcatRows",logcatRows);
-                mv.addObject("serverip",serverIp);
-                minicap.installMinicap(adbDevice);
-                minicap.startMinicapThread(adbDevice,Constant.MINICAPVIRTUALSIZE,quality);
+        String assignroleid = (String) deviceList.get(0).get("assignroleid");
+        if((assignroleid!=null&&roleid!=null&&roleid.equals(assignroleid))||"0".equals(assignroleid)){
+            ModelAndView mv = new ModelAndView("devicecontrol");
+            List<AdbDevice> adbDeviceList = deviceListenerService.getAdbDeviceList();
+
+
+            String phonetype = req.getParameter("phonetype");
+            List<Map<String, Object>> userSettingList = userSetting.getMinicapResolution(deviceid,model,userid);
+            String quality = "";
+            if(userSettingList.size()==0){
+                //用户没有设置过自己的清晰度用默认
+                List<Map<String, Object>> paramlist = parameterDao.getParamByName(Constant.MINICAPINITRESOLUTION);
+                quality = (String) paramlist.get(0).get("value");
+            }else{
+                quality = (String) userSettingList.get(0).get("minicapresolution");
             }
+            //更新数据库使用状态
+            HashMap args = new HashMap();
+            args.put("userid",userid);
+            args.put("deviceid",deviceid);
+            args.put("model",model);
+            args.put("status","1");
+            devicesDao.updateDevicesUseridStatusByDeviceidModel(args);
+
+            String adbkitPort = (String) deviceList.get(0).get("adbkitport");
+            List<Map<String, Object>> paramlist1 = parameterDao.getParamByName(Constant.ADBKITPATH);
+            String adbkitpath = (String) paramlist1.get(0).get("value");
+            List<Map<String, Object>> paramlist2 = parameterDao.getParamByName(Constant.LOGCATROWS);
+            String logcatRows = (String) paramlist2.get(0).get("value");
+            List<Map<String, Object>> paramlist3 = parameterDao.getParamByName(Constant.SERVERIP);
+            String serverIp = (String) paramlist3.get(0).get("value");
+            for(AdbDevice adbDevice :adbDeviceList){
+                if(deviceid!=null && deviceid.equals(adbDevice.getSerialNumber())&& model!=null && model.equals(adbDevice.getProperty(Constant.PROP_MODEL))){
+                    CmdTool cmdTool = new CmdTool();
+                    String startAdbKit = adbkitpath+" usb-device-to-tcp -p "+adbkitPort+" "+adbDevice.getSerialNumber();
+                    logTools.printLog(startAdbKit,"debug");
+                    cmdTool.execCommand(startAdbKit);
+                    String screensize = adbDevice.getProperty("SCREEN_SIZE");
+                    mv.addObject("screensize",screensize);
+                    mv.addObject("manufacture",adbDevice.getProperty("MANUFACTURE"));
+                    mv.addObject("sn",adbDevice.getSerialNumber());
+                    mv.addObject("phonetype",phonetype);
+                    mv.addObject("userid",userid);
+                    mv.addObject("deviceid",deviceid);
+                    mv.addObject("model",model);
+                    mv.addObject("resolution",quality);
+                    mv.addObject("adbkitport",adbkitPort);
+                    mv.addObject("logcatRows",logcatRows);
+                    mv.addObject("serverip",serverIp);
+                    minicap.installMinicap(adbDevice);
+                    minicap.startMinicapThread(adbDevice,Constant.MINICAPVIRTUALSIZE,quality);
+                }
+            }
+            //记录用户使用日志
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+            String date = df.format(new Date());
+            List<Map<String, Object>> paramlist = parameterDao.getParamByName(Constant.LOGCATROWS);
+            int count = Integer.parseInt((String) paramlist.get(0).get("value"));
+            HashMap args1 = new HashMap();
+            args1.put("userid",userid);
+            args1.put("deviceid",deviceid);
+            args1.put("model",model);
+            args1.put("starttime",date);
+            args1.put("endtime","");
+            args1.put("logcatcols",count);
+            userLogDao.insertUserLog(args1);
+            return mv;
+        }else {
+            ModelAndView mv = new ModelAndView("error");
+            return mv;
         }
-        //记录用户使用日志
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
-        String date = df.format(new Date());
-        List<Map<String, Object>> paramlist = parameterDao.getParamByName(Constant.LOGCATROWS);
-        int count = Integer.parseInt((String) paramlist.get(0).get("value"));
-        HashMap args1 = new HashMap();
-        args1.put("userid",userid);
-        args1.put("deviceid",deviceid);
-        args1.put("model",model);
-        args1.put("starttime",date);
-        args1.put("endtime","");
-        args1.put("logcatcols",count);
-        userLogDao.insertUserLog(args1);
-        return mv;
     }
 
     @RequestMapping(value="/devicesetting", method= RequestMethod.POST)

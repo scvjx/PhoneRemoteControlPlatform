@@ -13,7 +13,7 @@ import java.util.Map;
 public class DevicesDao extends BaseDao{
 
     public void insertDevices(Map args){
-        String sql = "insert into devices values(:deviceid,:resolution,:androidversion,:cpu,:manufacturer,:model,:status,:userid,:lastusetime,:minicapport,:adbkitport)";
+        String sql = "insert into devices values(:deviceid,:resolution,:androidversion,:cpu,:manufacturer,:model,:status,:userid,:lastusetime,:minicapport,:adbkitport,:assignroleid)";
         smartDao.insert(sql,args);
     }
 
@@ -46,7 +46,7 @@ public class DevicesDao extends BaseDao{
     }
 
     public void updateDevicesUseridByDeviceidModelUserid(Map args){
-        String sql = "update devices set userid =:newid,status=:status where deviceid=:deviceid and model=:model and userid=:userid";
+        String sql = "update devices set userid =:newid,status=:status where deviceid=:deviceid and userid=:userid";
         smartDao.insert(sql,args);
     }
 
@@ -59,4 +59,10 @@ public class DevicesDao extends BaseDao{
         String sql = "update devices set userid =:userid,status=:status where deviceid=:deviceid and model=:model";
         smartDao.insert(sql,args);
     }
+
+    public void updateDevicesRoleByDeviceidModel(Map args){
+        String sql = "update devices set assignroleid =:assignroleid where deviceid=:deviceid and model = :model";
+        smartDao.insert(sql,args);
+    }
+
 }

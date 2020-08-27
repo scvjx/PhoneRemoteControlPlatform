@@ -294,6 +294,7 @@ public class DeviceListenerService {
                         args.put("lastusetime","");
                         args.put("minicapport",minicapport);
                         args.put("adbkitport",adbkitport);
+                        args.put("assignroleid","0");
                         devicesDao.insertDevices(args);
                     }else{
                         //如果旧手机则更新一下手机的状态为1-在线和minicap端口
